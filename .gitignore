@@ -1,0 +1,39 @@
+# Python related
+__pycache__
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Docker related
+*.log
+*.tar
+*.tar.gz
+
+# LaTeX temporary files
+*.aux
+*.log
+*.out
+*.toc
+
+# Ignore environment variables and configuration files that contain secrets
+.env
+.env.local
+.env.production
+.env.staging
+
+# Ignore config files that may contain sensitive information
+config.json
+config.yaml
+config.toml
+
+# Ignore specific files that are known to contain secrets
+secrets.yaml
+credentials.json
+
+# Ignore directory where sensitive files might be stored
+secrets/
+
