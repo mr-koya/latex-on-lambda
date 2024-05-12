@@ -1,27 +1,25 @@
-# Start with the base image for Python provided by AWS Lambda
-FROM public.ecr.aws/lambda/python:3.9
+# Use Amazon Linux 2023 as the base image
+FROM amazonlinux:2023
 
-# Install system updates and essential LaTeX packages
+# Install necessary OS updates and dependencies
 RUN yum update -y && \
-    yum install -y \
-    texlive-latex \
-    texlive-xetex \
-    texlive-luatex \
-    texlive-latex-recommended \
-    texlive-fonts-recommended \
-    ghostscript && \
+    yum install -y wget perl-Digest-MD5 perl fontconfig tar && \
     yum clean all
 
-# Copy the Python function code
-COPY src/ ${LAMBDA_TASK_ROOT}
+# Install TinyTeX
+RUN wget -qO- "https://yihui.org/tinytex/install-bin-unix.sh" | sh && \
+    /root/.TinyTeX/bin/*/tlmgr path add
 
-# Install Python dependencies
-COPY requirements.txt .
-RUN python -m pip install --no-cache-dir -r requirements.txt
+# Set the PATH for the installed TinyTeX
+ENV PATH=/root/.TinyTeX/bin/x86_64-linux:$PATH
 
-# Copy LaTeX templates if needed
-COPY templates/ ${LAMBDA_TASK_ROOT}/templates/
+# Add a non-root user 'latexuser' and switch to it
+RUN adduser --shell /bin/bash latexuser && \
+    chown -R latexuser:latexuser /home/latexuser
+USER latexuser
+WORKDIR /home/latexuser
 
-# Set the CMD to your handler (this is the entry point for the Lambda function)
-CMD ["app.handler"]
+# Set pdflatex as the entry point
+ENTRYPOINT ["pdflatex"]
+CMD ["--version"]
 
