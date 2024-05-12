@@ -12,6 +12,7 @@ pip-delete-this-directory.txt
 *.log
 *.tar
 *.tar.gz
+.Dockerfile.swp
 
 # LaTeX temporary files
 *.aux
