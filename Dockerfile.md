@@ -32,17 +32,8 @@ ENV PATH=/root/.TinyTeX/bin/x86_64-linux:$PATH
 ```
 This environment variable explicitly sets the `PATH` to include the TinyTeX binary directory, ensuring that LaTeX commands are available system-wide and can be executed from any terminal session, interactive or non-interactive.
 
-### 5. Adding a Non-root User
-```docker
-RUN adduser --shell /bin/bash latexuser && \
-    chown -R latexuser:latexuser /home/latexuser
-USER latexuser
-WORKDIR /home/latexuser
-```
-- `adduser`: Adds a non-root user named 'latexuser' to enhance security by running the container processes under a user with limited system permissions.
-- `chown`: Changes the ownership of the user's home directory to `latexuser`, ensuring that the user has appropriate access rights to their own files.
-- `USER`: Switches to the `latexuser` to run all subsequent commands.
-- `WORKDIR`: Sets `/home/latexuser` as the working directory where all operations will be performed by default.
+# Set the working directory
+WORKDIR /workspace
 
 ### 6. Entrypoint and CMD
 ```docker

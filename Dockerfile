@@ -13,11 +13,8 @@ RUN wget -qO- "https://yihui.org/tinytex/install-bin-unix.sh" | sh && \
 # Set the PATH for the installed TinyTeX
 ENV PATH=/root/.TinyTeX/bin/x86_64-linux:$PATH
 
-# Add a non-root user 'latexuser' and switch to it
-RUN adduser --shell /bin/bash latexuser && \
-    chown -R latexuser:latexuser /home/latexuser
-USER latexuser
-WORKDIR /home/latexuser
+# Set the working directory
+WORKDIR /workspace
 
 # Set pdflatex as the entry point
 ENTRYPOINT ["pdflatex"]
