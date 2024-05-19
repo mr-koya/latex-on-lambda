@@ -1,10 +1,10 @@
 # Use Amazon Linux 2023 as the base image
-FROM amazonlinux:2023
+FROM public.ecr.aws/lambda/provided.al2023 
 
-# Install necessary OS updates and dependencies
-RUN yum update -y && \
-    yum install -y wget perl-Digest-MD5 perl fontconfig tar && \
-    yum clean all
+# Install necessary OS updates and dependencies for LaTeX and Python
+RUN dnf update -y && \
+    dnf install -y wget perl-Digest-MD5 perl fontconfig tar python3 python3-pip && \
+    dnf clean all
 
 # Download and install TinyTeX
 RUN wget -qO- "https://yihui.org/tinytex/install-bin-unix.sh" | sh \
@@ -16,20 +16,21 @@ ENV PATH=/root/.TinyTeX/bin/x86_64-linux:$PATH
 # Install additional LaTeX packages
 RUN tlmgr install amsmath amsfonts revtex4-1 textcase bibtex
 
-# Copy LaTeX project files
-COPY src/compile_tex.sh /workspace/compile_tex.sh
-COPY templates/example_template.tex /workspace/example_template.tex
-COPY templates/references.bib /workspace/references.bib
+# Install AWS Lambda Runtime Interface Client for Python
+RUN pip3 install awslambdaric
+
+# Copy the LaTeX and Python handler files
+COPY src/compile_tex.sh /var/task/compile_tex.sh
+COPY src/app.py /var/task/app.py
+COPY templates/ /var/task/templates/
 
 # Make the LaTeX compilation script executable
-RUN chmod +x /workspace/compile_tex.sh
+RUN chmod +x /var/task/compile_tex.sh
 
-# Set the working directory to the workspace
-WORKDIR /workspace
+# Set the working directory to the Lambda task folder
+WORKDIR /var/task
 
-# Set the entry point to the compilation script
-ENTRYPOINT ["/workspace/compile_tex.sh"]
-
-# Set the default parameter for the entry point script
-CMD ["default"]
+# The entry point configures AWS Lambda to use the custom runtime
+ENTRYPOINT [ "/usr/bin/python3"], "-m", "awslambdaric" ]
+CMD ["app.py"]
 
