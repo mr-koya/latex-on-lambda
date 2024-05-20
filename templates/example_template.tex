@@ -1,7 +1,4 @@
-\documentclass[aps,pre,reprint,groupedaddress]{revtex4-1}
-% Load necessary packages
-\usepackage{amsmath}  % Advanced math typesetting
-\usepackage{amsfonts} % Fonts from the American Mathematical Society
+\documentclass{article}
 
 \begin{document}
 
@@ -9,11 +6,7 @@
 \title{Title of Your Paper Here}
 
 % Authors and affiliations
-\author{Author One}
-\affiliation{First Institution}
-
-\author{Author Two}
-\affiliation{Second Institution}
+\author{Author One \\ First Institution \\ \and Author Two \\ Second Institution}
 
 \date{\today}
 
@@ -48,7 +41,7 @@ Interpret the results, discuss uncertainties, and how they affect your conclusio
 Summarize the main findings, their implications, and suggest areas for further research. Further reading and comparisons can be found in the works of Green et al. \cite{Green2016}.
 
 % Bibliography
-\bibliographystyle{apsrev4-1} % This line is necessary to specify the bibliography style
+\bibliographystyle{plain} % Use a standard LaTeX bibliography style
 \bibliography{references} % You need to have a .bib file named references.bib
 
 \end{document}
