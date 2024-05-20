@@ -20,7 +20,6 @@ RUN python3 -m pip install awslambdaric
 COPY src/compile_tex.sh /var/task/compile_tex.sh
 COPY src/app.py /var/task/app.py
 COPY templates/ /var/task/templates/
-COPY test_lambda.py /var/task/test_lambda.py
 
 # Make the LaTeX compilation script executable
 RUN chmod +x /var/task/compile_tex.sh

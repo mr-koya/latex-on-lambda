@@ -34,10 +34,10 @@ fi
 
 # Run pdflatex two more times to resolve references
 echo "Running pdflatex (second pass)..." >> $OUTPUT_DIR/compile.log
-pdflatex -interaction=nonstopmode -output-directory=$OUTPUT_DIR $TEX_FILE >> $OUTPUT_DIR/compile.log 2>&1
+pdflatex -interaction=nonstopmode -output-directory=$OUTPUT_DIR $(basename $TEX_FILE) >> $OUTPUT_DIR/compile.log 2>&1
 
 echo "Running pdflatex (third pass)..." >> $OUTPUT_DIR/compile.log
-pdflatex -interaction=nonstopmode -output-directory=$OUTPUT_DIR $TEX_FILE >> $OUTPUT_DIR/compile.log 2>&1
+pdflatex -interaction=nonstopmode -output-directory=$OUTPUT_DIR $(basename $TEX_FILE) >> $OUTPUT_DIR/compile.log 2>&1
 
 # Check if the final PDF is generated
 if [ -f "${OUTPUT_DIR}/$(basename $TEX_FILE .tex).pdf" ]; then
