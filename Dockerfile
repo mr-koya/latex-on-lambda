@@ -13,28 +13,17 @@ ENV PATH=/usr/local/texlive/2023/bin/x86_64-linux:$PATH
 RUN tlmgr init-usertree && \
     tlmgr install amsmath amsfonts textcase bibtex
 
-# Install AWS Lambda Runtime Interface Client for Python
-RUN python3 -m pip install awslambdaric
+# Copy requirements and install dependencies
+COPY requirements.txt ${LAMBDA_TASK_ROOT}
+RUN pip install -r requirements.txt
 
-# Copy the LaTeX and Python handler files
-COPY src/compile_tex.sh /var/task/compile_tex.sh
-COPY src/app.py /var/task/app.py
-COPY templates/ /var/task/templates/
+# Copy application code and templates
+COPY src/ ${LAMBDA_TASK_ROOT}/
+COPY templates/ ${LAMBDA_TASK_ROOT}/templates/
 
 # Make the LaTeX compilation script executable
-RUN chmod +x /var/task/compile_tex.sh
+RUN chmod +x ${LAMBDA_TASK_ROOT}/compile_tex.sh
 
-# Set the working directory to the Lambda task folder
-WORKDIR /var/task
-
-# Create a directory for output
-RUN mkdir -p /var/task/output
-
-# Install the AWS Lambda Runtime Interface Emulator
-ADD https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie /usr/local/bin/aws-lambda-rie
-RUN chmod +x /usr/local/bin/aws-lambda-rie
-
-# The entry point configures AWS Lambda to use the custom runtime
-ENTRYPOINT ["/usr/local/bin/aws-lambda-rie", "/usr/bin/python3", "-m", "awslambdaric"]
+# Set the CMD to your handler
 CMD ["app.lambda_handler"]
 
