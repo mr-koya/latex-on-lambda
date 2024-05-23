@@ -17,9 +17,8 @@ RUN tlmgr init-usertree && \
 COPY requirements.txt ${LAMBDA_TASK_ROOT}
 RUN pip install -r requirements.txt
 
-# Copy application code and templates
+# Copy application code
 COPY src/ ${LAMBDA_TASK_ROOT}/
-COPY templates/ ${LAMBDA_TASK_ROOT}/templates/
 
 # Make the LaTeX compilation script executable
 RUN chmod +x ${LAMBDA_TASK_ROOT}/compile_tex.sh

@@ -14,7 +14,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-BIB_FILE="$(dirname $TEX_FILE)/references.bib"
+BIB_FILE="${TEX_FILE%/*}/references.bib"
 cp $BIB_FILE $OUTPUT_DIR
 
 echo "Running bibtex..." >> $OUTPUT_DIR/compile.log
