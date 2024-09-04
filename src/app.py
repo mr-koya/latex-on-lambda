@@ -15,28 +15,28 @@ def save_file(encoded_content, file_path):
         logging.error(f"Failed to save file {file_path}: {str(e)}")
         raise
 
-def lambda_handler(event, context):
+def handler(event, context):
     logging.info("Event received by lambda_handler")
     tex_content = event.get('tex_content')
     bib_content = event.get('bib_content')
-    
+
     if not tex_content or not bib_content:
         logging.error("tex_content and bib_content must be provided.")
         return {
             'statusCode': 400,
             'body': json.dumps('tex_content and bib_content must be provided.')
         }
-    
-    tex_file_path = "/var/task/templates/example_template.tex"
-    bib_file_path = "/var/task/templates/references.bib"
-    output_dir = "/var/task/output"
-    
+
+    tex_file_path = "/tmp/task/templates/example_template.tex"
+    bib_file_path = "/tmp/task/templates/references.bib"
+    output_dir = "/tmp/task/output"
+
     os.makedirs(output_dir, exist_ok=True)
-    
+
     logging.info("Saving tex and bib files")
     save_file(tex_content, tex_file_path)
     save_file(bib_content, bib_file_path)
-    
+
     try:
         logging.info("Running LaTeX compilation script")
         result = subprocess.run(

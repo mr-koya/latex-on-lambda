@@ -15,6 +15,9 @@ RUN dnf update -y && \
     dnf install -y ghostscript libgs-devel ImageMagick poppler fontconfig\
     tar perl perl-Digest-MD5 python3-pip && dnf clean all
 
+# Set up a symbolic link for Python
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
 # Install TeXLive (as a portable install) then remove the tar.gz file in one
 # RUN command to save space
 RUN curl -L -o install-tl-unx.tar.gz \
@@ -25,6 +28,9 @@ RUN curl -L -o install-tl-unx.tar.gz \
 RUN cd $(find . -maxdepth 1 -type d -name 'install-tl-*') && \
     echo "Now in directory: $(pwd)" && \
     ./install-tl --profile=/tmp/texlive.profile
+
+RUN mkdir /testfiles
+COPY support_files/* /testfiles/
 
 # Test the TeX setup
 RUN cd /tmp && \
