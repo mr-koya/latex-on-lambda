@@ -38,3 +38,5 @@ credentials.json
 # Ignore directory where sensitive files might be stored
 secrets/
 
+# Mac related
+.DS_Store

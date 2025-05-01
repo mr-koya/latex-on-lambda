@@ -2,22 +2,42 @@
 FROM amazonlinux:2023
 
 # Set environment variables
-ENV PATH=/root/.TinyTeX/bin/x86_64-linux:$PATH
+ENV PATH=/opt/bin/aarch64-linux:$PATH
 ENV LAMBDA_TASK_ROOT=/var/task
 ENV AWS_LAMBDA_RUNTIME_API=127.0.0.1:8080
 
+# Add the texlive.profile and test files
+COPY support_files/* /tmp/
+
+
 # Install necessary OS updates and dependencies
 RUN dnf update -y && \
-    dnf install -y wget perl-Digest-MD5 perl fontconfig tar python3-pip && \
-    dnf clean all
+    dnf install -y ghostscript libgs-devel ImageMagick poppler fontconfig\
+    tar perl perl-Digest-MD5 python3-pip && dnf clean all
 
-# Install TinyTeX
-RUN wget -qO- "https://yihui.org/tinytex/install-bin-unix.sh" | sh && \
-    /root/.TinyTeX/bin/*/tlmgr path add
+# Set up a symbolic link for Python
+RUN ln -s /usr/bin/python3 /usr/bin/python
 
-# Install additional LaTeX packages
-RUN tlmgr init-usertree && \
-    tlmgr install amsmath amsfonts textcase bibtex
+# Install TeXLive (as a portable install) then remove the tar.gz file in one
+# RUN command to save space
+RUN curl -L -o install-tl-unx.tar.gz \
+    https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz && \
+    tar -xzf install-tl-unx.tar.gz && \
+    rm install-tl-unx.tar.gz
+
+RUN cd $(find . -maxdepth 1 -type d -name 'install-tl-*') && \
+    echo "Now in directory: $(pwd)" && \
+    ./install-tl --profile=/tmp/texlive.profile
+
+RUN mkdir /testfiles
+COPY support_files/* /testfiles/
+
+# Test the TeX setup
+RUN cd /tmp && \
+	pdflatex apssamp.tex && bibtex apssamp && pdflatex apssamp.tex && pdflatex apssamp
+
+# Clean up the installation files
+RUN rm -r install-tl-* /tmp/*
 
 # Install AWS Lambda runtime interface client and other Python dependencies
 RUN pip3 install awslambdaric requests

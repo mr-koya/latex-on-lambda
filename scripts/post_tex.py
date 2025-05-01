@@ -26,14 +26,17 @@ def main():
 
     response = requests.post(url, data=json.dumps(payload), headers=headers)
 
+
     if response.status_code == 200:
         response_json = response.json()
+        print(response_json)
+
         response_body = json.loads(response_json['body'])
         message = response_body.get('message', 'No message found')
         pdf_content = response_body.get('pdf_content', '')
 
         print("Message:", message)
-        
+
         if pdf_content:
             os.makedirs('../output', exist_ok=True)
             pdf_data = base64.b64decode(pdf_content)
